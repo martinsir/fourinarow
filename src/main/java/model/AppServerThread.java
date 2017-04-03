@@ -33,11 +33,9 @@ public class AppServerThread extends Thread {
             try {
                 inputCmd = inputStream.readUTF();
                 //if user name start with JOIN then connect to server.
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
