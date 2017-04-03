@@ -12,6 +12,7 @@ import java.net.Socket;
  * Created by Martin on 03-04-2017.
  */
 public class AppServerThread extends Thread {
+
     private AppServerController appServerController;
     private Socket socket; //Socket(InetAddress address, int port, InetAddress localAddr, int localPort)
     private InetAddress address;
