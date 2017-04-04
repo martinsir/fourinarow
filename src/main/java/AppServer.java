@@ -3,7 +3,12 @@
  */
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class AppServer extends Application {
 
@@ -12,7 +17,11 @@ public class AppServer extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
-
+    public void start(Stage primaryStage) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/server.fxml"));
+        primaryStage.setTitle("4 på stribe");
+        primaryStage.setScene(new Scene(root, 600, 600));
+        primaryStage.show();
     }
 }
+
