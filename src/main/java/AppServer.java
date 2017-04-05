@@ -20,7 +20,7 @@ public class AppServer extends Application {
     public void start(Stage primaryStage) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/server.fxml"));
         primaryStage.setTitle("4 på stribe");
-        primaryStage.setScene(new Scene(root, 600, 600));
+        primaryStage.setScene(new Scene(root, 300, 300));
         primaryStage.show();
     }
 }

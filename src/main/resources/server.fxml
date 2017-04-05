@@ -5,6 +5,6 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AppServerController">
    <children>
-      <Button fx:id="startServer" layoutX="397.0" layoutY="344.0" mnemonicParsing="false" onAction="#startServer" text="Start" />
+      <Button fx:id="startServer" layoutX="83.0" layoutY="82.0" mnemonicParsing="false" onAction="#startServer" prefHeight="25.0" prefWidth="151.0" text="Start Server" />
    </children>
 </AnchorPane>
