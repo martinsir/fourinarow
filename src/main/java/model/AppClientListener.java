@@ -26,7 +26,8 @@ public class AppClientListener implements Runnable{
             String formatDateTime=dateTime();
             try {
                 String msg = inputStream.readUTF();
-                System.out.println("msg:  " +msg);
+                //System.out.println("msg:  " +msg);
+
 
                 if (msg.contains("Logged off")) {
                                   //msg = msg.substring()
@@ -36,9 +37,10 @@ public class AppClientListener implements Runnable{
                     appClientController.setNameTaken(true);
                 }
                 if (msg.contains("user_name")) {
-                                        // msg = msg.substring?
+                    msg = msg.replace("user_name", "");
+                    appClientController.getUserNameOnline().setText(msg);
                 } else if (!msg.isEmpty()){
-                                         //append (formatted time + msg)
+                    appClientController.getTextArea().appendText(formatDateTime + " "+ msg+"\n");
                 }
 
             } catch (IOException e) {

@@ -4,7 +4,6 @@ import javafx.fxml.Initializable;
 import model.AppServerThread;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
@@ -84,7 +83,8 @@ public class AppServerController implements Initializable, Runnable {
       for (AppServerThread user: clients){
           user.send(userNameList);
       }
-      // set online user text
+
+      // set online user text server side
     }
 
     public synchronized  void handler(String id, String input){

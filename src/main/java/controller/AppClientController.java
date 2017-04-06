@@ -2,14 +2,17 @@ package controller;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import model.AppClientListener;
+import model.AppServerThread;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,15 +33,18 @@ public class AppClientController implements Initializable {
     private DataOutputStream outputStream;
     private boolean isNameTaken;
     private boolean isFirstPlayer = true;
+    private boolean isGameOn;
+    private int counter =0;
+    AppServerThread appServerThread;
 
     @FXML
-    Button b1;
+    Button button1;
     @FXML
-    Button b2;
+    Button button2;
     @FXML
-    Button b3;
+    Button button3;
     @FXML
-    Button b4;
+    Button button4;
     @FXML
     Button b5;
     @FXML
@@ -118,16 +124,30 @@ public class AppClientController implements Initializable {
 
     @FXML
     private Button startGame;
+
     @FXML
-    private GridPane board;
+    private GridPane gridPane;
 
     @FXML
     private Button connect;
+    @FXML
+    private Button logOut;
+    @FXML
+    private Button chooseName;
+    @FXML
+    private Button sendMessage;
+    @FXML
+    private TextField textFieldWrite;
+    @FXML
+    private TextArea textArea;
+    @FXML
+    private TextField userNameField;
+    @FXML
+    private TextArea userNameOnline;
 
     @FXML
-    public void exitApp(ActionEvent actionEvent) {
-        //Platform.exit();
-        buttonHandler(actionEvent);
+    public void exitApp(MouseEvent event) {
+        Platform.exit();
     }
 
     @Override
@@ -135,7 +155,7 @@ public class AppClientController implements Initializable {
 
     }
 
-    public void connectToServer(ActionEvent actionEvent) {
+    public void connectToServer(MouseEvent event) {
         try {
             //String set name?
             //String username = "test name ";
@@ -148,6 +168,19 @@ public class AppClientController implements Initializable {
             Thread t1 = new Thread(listener);
             t1.start();
 
+            while(!isGameOn){
+                if(counter%2 == 0){
+                    //get first user socket.lockaport fx
+                   // switch turn
+
+                }
+                if(counter%2 == 1){
+                    //second user
+                    //first user
+                }
+                counter++;
+            }
+
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -155,33 +188,60 @@ public class AppClientController implements Initializable {
         }
     }
 
+    // bruges til at sende data til serveren
     public void sendMessage() {
         //observer listener?
         try {
-            outputStream.writeUTF("getText");
+            outputStream.writeUTF(textFieldWrite.getText());
             outputStream.flush();
-            //set""
+            textFieldWrite.setText("");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void logOut(ActionEvent actionEvent) {
+    public void logOut(MouseEvent event) {
         try {
             outputStream.writeUTF("QUIT");
             outputStream.flush();
-            exitApp(actionEvent);
+            exitApp(event);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    //button method click handler ActionEvent
 
-    public void buttonHandler(ActionEvent actionEvent){
-        Button clickedButton = (Button) actionEvent.getTarget();
+    // ændre navnet til det foretrukkende hvis det er optaget
+    public void chooseName() throws IOException {
+        try {
+            outputStream.writeUTF("user_name"+userNameField.getText());
+            outputStream.flush();
+            userNameOnline.setText(userNameField.getText());
+
+            if (isNameTaken()==true){
+                textArea.appendText("Name is taken.\n");
+                chooseName.setDisable(false);
+            }else if (isNameTaken()==false) {
+                userNameOnline.setText(userNameField.getText());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    //button method click handler ActionEvent
+    //TODO findWinner, startGame, buttonHandler, logOut, playerTurn
+    //find 4 in a row verticle, horizontal, incline and decline
+
+
+    /*Denne metode sætter O tegnet og en farve mellem rød og blå.
+    * metoden er ikke færdig, da man kan spille både som rød og blå*/
+    public void buttonHandleronAction(MouseEvent event) {
+
+        Button clickedButton = ((Button) event.getTarget());
         String buttonLabel = clickedButton.getText();
-        clickedButton.setText("test");
 
         if ("".equals(buttonLabel) && isFirstPlayer){
             clickedButton.setText("O");
@@ -192,23 +252,26 @@ public class AppClientController implements Initializable {
             clickedButton.setTextFill(Color.BLUE);
             isFirstPlayer = true;
         }
-        //find the winner
+        findWinner();
+
     }
 
-    //TODO findWinner, startGame, buttonHandler, logOut
-    //find 4 in a row verticle, horizontal, incline and decline
-
-
+    /*Denne metode er heller ikke færdig. Men nåede at tilføje kolonne vinder træk, der mangler række og på skrå -
+    skå skal laves to gange for hver sin side (op fra ned venstre side, og opfra ned højre)*/
     private boolean findWinner() {
-        //row
-        if (""!=b1.getText() && b1.getText() ==b2.getText() && b2.getText() ==b3.getText()) {
+        //column
+        if (""!=button1.getText() && button1.getText() ==button2.getText() && button2.getText() ==button3.getText() && button3.getText()==button4.getText()) {
+            System.out.println("test ");
+            textArea.setText(isFirstPlayer + "Won!");
+
+
         return true;}
 
         return false;
     }
-
-    public void startGame(ActionEvent actionEvent) {
-        ObservableList<Node> buttons = board.getChildren();
+    //start spill /nyt spill
+    public void startGame(MouseEvent event) {
+        ObservableList<Node> buttons = gridPane.getChildren();
         buttons.forEach(button ->{
             ((Button)button).setText("");
         });
@@ -247,4 +310,35 @@ public class AppClientController implements Initializable {
         isNameTaken = nameTaken;
     }
 
+    public TextField getUserNameField() {
+        return userNameField;
+    }
+
+    public TextArea getUserNameOnline() {
+        return userNameOnline;
+    }
+
+    public void setUserNameField(TextField userNameField) {
+        this.userNameField = userNameField;
+    }
+
+    public void setUserNameOnline(TextArea userNameOnline) {
+        this.userNameOnline = userNameOnline;
+    }
+
+    public TextField getTextFieldWrite() {
+        return textFieldWrite;
+    }
+
+    public void setTextFieldWrite(TextField textFieldWrite) {
+        this.textFieldWrite = textFieldWrite;
+    }
+
+    public TextArea getTextArea() {
+        return textArea;
+    }
+
+    public void setTextArea(TextArea textArea) {
+        this.textArea = textArea;
+    }
 }

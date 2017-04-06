@@ -1,12 +1,11 @@
 package model;
 
-import controller.AppClientController;
 import controller.AppServerController;
 
-import javax.naming.ldap.SortKey;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Created by Martin on 03-04-2017.
@@ -26,6 +25,7 @@ public class AppServerThread extends Thread {
     public AppServerThread(AppServerController server, Socket socket){
         this.appServerController = server;
         this.socket = socket;
+        this.userName = String.valueOf(socket.getPort());
     }
 
     public void run(){
@@ -61,11 +61,12 @@ public class AppServerThread extends Thread {
         }
     }
 
+
     public void clientChangeUserName (String input){
         isNameTaken = false;
         String desiredUsername = input.replace("user_name", "");
         for (AppServerThread client : appServerController.getClients()) {
-            if (client.getUserName().equals(desiredUsername)) {
+            if (client.getUserName().equalsIgnoreCase(desiredUsername)) {
                 isNameTaken=true;
             }
         }
@@ -97,7 +98,9 @@ public class AppServerThread extends Thread {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    @Override
+    public String toString() {
+        return userName ;
     }
+
 }
